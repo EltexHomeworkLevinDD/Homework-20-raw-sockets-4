@@ -192,7 +192,7 @@ int receive_raw_packet(const char *ifname, char *buffer, int buf_len,
 
     // Бесконечный цикл для приема пакетов
     while (1) {
-        int recv_len = recvfrom(sockfd, buffer, buf_len, 0,
+        int recv_len = recvfrom(sockfd, buffer, buf_len, 0, 
                     (struct sockaddr *)&sa, &sa_len);
         if (recv_len < 0) {
             perror("recvfrom");
@@ -205,12 +205,23 @@ int receive_raw_packet(const char *ifname, char *buffer, int buf_len,
         udp_header = (struct udphdr *)(buffer + sizeof(struct ether_header) +
                     sizeof(struct iphdr));
 
+        char src_ip[INET_ADDRSTRLEN];
         char dest_ip[INET_ADDRSTRLEN];
-        inet_ntop(AF_PACKET, &ip_header->daddr, dest_ip, sizeof(struct sockaddr_ll));
-        printf("received from %s:%d\n", dest_ip, (int)ntohs(udp_header->uh_sport));
+        inet_ntop(AF_INET, &(ip_header->saddr), src_ip, INET_ADDRSTRLEN);
+        inet_ntop(AF_INET, &(ip_header->daddr), dest_ip, INET_ADDRSTRLEN);
+        printf("Received packet from %s:%d to %s:%d protocol %d\n", src_ip, ntohs(udp_header->source), dest_ip, ntohs(udp_header->dest), ip_header->protocol);
+
+
+        // Проверка на UDP протокол
+        if (ip_header->protocol != IPPROTO_UDP) {
+            continue;
+        }
 
         // Проверка порта назначения
         if (ntohs(udp_header->dest) == expected_dest_port) {
+
+            printf("Received packet from server!\n");
+
             close(sockfd);
             return recv_len;
         }
