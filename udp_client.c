@@ -18,9 +18,9 @@ int main() {
     const char *ifname = "enp0s8";
     const unsigned char dest_mac[6] = {0x08, 0x00, 0x27, 0x28, 0x0c, 0x60};
     const char *src_ip = "192.168.0.10";
-    const unsigned short src_port = 12345;
+    const unsigned short src_port = 4444;
     const char *dest_ip = "192.168.0.11";
-    const unsigned short dest_port = 54321;
+    const unsigned short dest_port = 55555;
     const char *payload = "hello";
     int payload_len = strlen(payload);
 
@@ -40,7 +40,7 @@ int main() {
         return 1;
     }
 
-    printf("Received response: %s\n", recv_buffer + sizeof(struct ether_header) +
+    printf("Received response: %s\n", recv_buffer + sizeof(struct ether_header)+
                 sizeof(struct iphdr) + sizeof(struct udphdr));
 
     return 0;

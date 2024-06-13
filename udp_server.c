@@ -6,8 +6,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#define SERVER_IP_S "127.0.0.1"
-#define SERVER_PORT_H 12345
+#define SERVER_IP_S "192.168.0.11"
+#define SERVER_PORT_H 55555
 #define BUFFER_SIZE 1024
 
 void to_uppercase(char *str) {

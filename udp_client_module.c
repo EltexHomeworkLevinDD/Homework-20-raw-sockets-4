@@ -174,7 +174,7 @@ int receive_raw_packet(const char *ifname, char *buffer, int buf_len,
     struct ether_header *eth_header;
     (void)eth_header; // Отключение предупреждений
     struct iphdr *ip_header;
-    (void)ip_header; // Отключение предупреждений
+    //(void)ip_header; // Отключение предупреждений
     struct udphdr *udp_header;
 
     // Создание RAW сокета
@@ -204,6 +204,10 @@ int receive_raw_packet(const char *ifname, char *buffer, int buf_len,
         ip_header = (struct iphdr *)(buffer + sizeof(struct ether_header));
         udp_header = (struct udphdr *)(buffer + sizeof(struct ether_header) +
                     sizeof(struct iphdr));
+
+        char dest_ip[INET_ADDRSTRLEN];
+        inet_ntop(AF_PACKET, &ip_header->daddr, dest_ip, sizeof(struct sockaddr_ll));
+        printf("received from %s:%d\n", dest_ip, (int)ntohs(udp_header->uh_sport));
 
         // Проверка порта назначения
         if (ntohs(udp_header->dest) == expected_dest_port) {
